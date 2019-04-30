@@ -1,0 +1,65 @@
+/**
+@mainpage Dokumentacja zadania drogi
+
+### Treść zadania
+
+Uwaga: aktualna treść zadania znajduje się w [Moodle'u](https://moodle.mimuw.edu.pl).
+
+### Opis programu
+Tegoroczne duże zadanie polega na zaimplementowaniu operacji na mapach drogowych. Na potrzeby tego zadania przyjmujemy następujące definicje.
+Mapa dróg jest zbiorem miast (ang. city) połączonych odcinkami dróg (ang. road).
+Miasto reprezentowane jest przez jego nazwę, która jest niepustym napisem w stylu C niezawierającym kodów od 0 do 31 ani średnika i zakończonym zerem.
+Każdy odcinek drogi łączy dwa różne miasta. Między parą miast może być co najwyżej jeden odcinek drogi. Odcinek drogi ma dwa atrybuty: długość, która jest dodatnią liczbą całkowitą i rok, który jest rokiem budowy lub rokiem ostatniego remontu i jest liczbą całkowitą. Wartości dodatnie reprezentują lata n.e., a wartości ujemne to lata p.n.e. Uwaga: nie było roku 0.
+Droga jest to ciąg odcinków drogowych łączących dwa różne miasta, bez przerw, samoprzecięć i pętli.
+Droga krajowa (ang. route) jest to droga. Jeden odcinek drogi może należeć do wielu dróg krajowych. Droga krajowa identyfikowana jest przez jej numer, który jest liczbą całkowitą z przedziału od 1 do 999. Długość drogi krajowej to suma długości jej odcinków.
+
+### Część 1
+Jako pierwszą część zadania należy zaimplementować moduł operacji na mapach drogowych. Opis interfejsu modułu znajduje się w pliku src/map.h w formacie komentarzy dla programu doxygen. Przykład użycia znajduje się w pliku src/map_main.c.
+Wymogami rozwiązania części 1 zadania są:
+
+* uzupełnienia implementacji w pliku src/map.h,
+* stworzenia pliku src/map.c z implementacją modułu,
+* uzupełnienia dokumentacji w formacie doxygen tak, aby była przydatna dla programistów rozwijających moduł.
+
+### Implementacja
+W repozytorium https://git.mimuw.edu.pl/IPP-login.git
+(gdzie login to identyfikator używany
+do logowania się w laboratorium komputerowym) znajduje się szablon
+implementacji rozwiązania tego zadania. Zadanie należy oddać przez powyższe
+repozytorium.
+Znajdują się tam następujące pliki:
+* src/map.h – deklaracja interfejsu modułu wraz z jego
+dokumentacją w formacie doxygen,
+* src/map_main.c – przykład użycia modułu,
+* CMakeLists.txt – plik konfiguracyjny programu cmake,
+* Doxyfile.in – plik konfiguracyjny programu doxygen,
+* MainPage.dox – strona główna dokumentacji w formacie doxygen
+
+Powinna być możliwość skompilowania rozwiązania w dwóch wersjach: release i debug. 
+
+Projekt można zaimportować do CLiona i tam zbudować.
+Można też zbudować go (będąc w katalogu głównym) przy użyciu poleceń:
+
+    mkdir release
+    cd release
+    cmake ..
+
+W wyniku kompilacji odpowiednio w katalogu release lub debug powinien powstać plik wykonywalny map oraz dokumentacja. W poleceniu cmake powinno być również możliwe jawne określenie wariantu release budowania pliku wynikowego:
+    cmake -D CMAKE_BUILD_TYPE=Release ..
+
+### Dokumentacja Doxygen
+Polecenie `make doc` generuje dokumentację Doxygena całego projektu na podstawie komentarzy umieszczonych w poszczególnych plikach.
+Twoje rozwiązanie powinno zawierać komentarze Doxygena co najmniej do każdego pliku
+oraz do wszystkich funkcji eksportowanych na zewnątrz pliku, w którym się znajdują.
+
+### Punktacja
+Za w pełni poprawne rozwiązanie zadania implementujące wszystkie wymagane funkcjonalności można zdobyć maksymalnie 20 punktów. Od tej oceny będą odejmowane punkty za poniższe uchybienia:
+* Za problemy ze skompilowaniem rozwiązania można stracić wszystkie punkty.
+* Za każdy test, którego program nie przejdzie, traci się do 1 punktu.
+* Za problemy z zarządzaniem pamięcią można stracić do 6 punktów.
+* Za niezgodną ze specyfikacją strukturę plików w rozwiązaniu, niezgodne ze specyfikacją nazwy plików w rozwiązaniu lub umieszczenie w repozytorium niepotrzebnych albo tymczasowych plików można stracić do 4 punktów.
+* Za złą jakość kodu, brzydki styl kodowania można stracić do 4 punktów.
+* Za ostrzeżenia wypisywane przez kompilator można stracić do 2 punktów.
+* Za braki w dokumentacji można stracić do 2 punktów.
+
+*/
