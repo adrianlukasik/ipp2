@@ -393,6 +393,8 @@ bool isCorrectChar(char c) {
 /* Sprawdza czy nazwa miasta city jest prawidłowa. */
 bool isCorrectNameCity(const char *city) {
     int n = (int) strlen(city);
+    if (n == 0)
+        return false;
     for (int i = 0; i < n; i++) {
         if (!isCorrectChar(city[i])) {
             return false;

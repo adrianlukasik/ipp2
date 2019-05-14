@@ -26,7 +26,7 @@ Map *newMap(void) {
         return NULL;
     }
     map->ct = ct;
-    for (int i = MIN_ROUTE_ID; i < MAX_ROUTE_ID; i++) {
+    for (int i = MIN_ROUTE_ID; i <= MAX_ROUTE_ID; i++) {
         map->routes[i] = NULL;
     }
     return map;
@@ -39,7 +39,7 @@ Map *newMap(void) {
  */
 void deleteMap(Map *map) {
     if (map != NULL) {
-        for (int i = MIN_ROUTE_ID; i < MAX_ROUTE_ID; i++)
+        for (int i = MIN_ROUTE_ID; i <= MAX_ROUTE_ID; i++)
             clearList(map->routes[i]);
         removeCitytree(map->ct);
         free(map);
