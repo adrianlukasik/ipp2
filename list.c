@@ -181,6 +181,8 @@ bool checkConnection(Citytree citytree1, Citytree citytree2, List l) {
             return true;
         else
             return false;
+    } else {
+        return false;
     }
 }
 
