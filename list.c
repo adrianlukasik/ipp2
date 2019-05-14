@@ -165,15 +165,16 @@ bool checkConnection(Citytree citytree1, Citytree citytree2, List l) {
             break;
         l = l->next;
     }
-    if (l->citytree == citytree1) {
+    if (l == NULL) {
+        return false;
+    } else if (l->citytree == citytree1) {
         if (l->next == NULL)
             return false;
         if (l->next->citytree == citytree2)
             return true;
         else
             return false;
-    }
-    if (l->citytree == citytree2) {
+    } else if (l->citytree == citytree2) {
         if (l->next == NULL)
             return false;
         if (l->next->citytree == citytree1)
