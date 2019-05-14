@@ -1,17 +1,9 @@
-//
-// Created by root on 29.04.19.
-//
-
 #ifndef DROGI_LIST_H
 #define DROGI_LIST_H
 
 #include <stdbool.h>
 #include "structure.h"
 #include "city_tree.h"
-
-struct Listnode;
-
-typedef struct Listnode *List;
 
 struct Listnode {
     Citytree citytree;
@@ -71,5 +63,12 @@ bool checkConnection(Citytree citytree1, Citytree citytree2, List l);
 
 /* Zwraca List w momencie gdy napotka citytree1 lub citytree2. */
 List getListCitytree(Citytree citytree1, Citytree citytree2, List l);
+
+/* Porównuje dwie drogi, które są związane z listami i priorytetami.
+ * Drogę z większym priorytetem dołączy do drogi mapListRoad.
+ * Zwraca wartość true jeśli udało się połączyć drogi.
+ * W przeciwnym przypadku zwraca wartość false. */
+bool compareRoads(List firstRoad, struct Priority *first, List secondRoad,
+                  struct Priority *second, List *mapListRoad);
 
 #endif //DROGI_LIST_H

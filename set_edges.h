@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #ifndef DROGI_SET_EDGES_H
 #define DROGI_SET_EDGES_H
 
@@ -53,5 +49,15 @@ Setedges deleteNodeSE(Setedges root, Citytree key);
 
 /* Wyszukiwanie binarne w zbiorze krawędzi t. */
 Setedges binSearchSE(Setedges t, Citytree key);
+
+/* Próbuje dodać do zbioru setedges element z kluczem citytreeKey
+ * Jeśli udało się przydzielić pamięć, dodaje element i zwraca true.
+ * W przeciwnym przypadku zwraca false. */
+bool addToSetedges(Setedges *setedges, Citytree citytreeKey, Road road);
+
+/* Usuwa strukturę wskazywaną przez setedges. */
+void removeSetedges(Setedges setedges);
+
+void wypiszMiasta(Setedges setedges);
 
 #endif //DROGI_SET_EDGES_H

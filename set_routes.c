@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include "set_routes.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -246,11 +242,11 @@ Setroutes binSearchSR(Setroutes t, unsigned key) {
     return t;
 }
 
-/* Wrzuca do wektora zawartość zbioru dróg krajowych. */
-void inOrder(Setroutes t, Vector v) {
-    if (t != NULL) {
-        inOrder(t->left, v);
-        pushVector(v, t->key);
-        inOrder(t->right, v);
+/* Usuwa strukturę wskazywaną przez setroutes. */
+void removeSetroutes(Setroutes setroutes) {
+    if (setroutes != NULL) {
+        removeSetroutes(setroutes->left);
+        removeSetroutes(setroutes->right);
+        free(setroutes);
     }
 }

@@ -1,12 +1,33 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include "structure.h"
+#include "city_tree.h"
 
 #define INITIAL_CAPACITY 2
+#define INCORRECT_YEAR 0
+#define INCORRECT_LENGTH 0
+
+/* Porównuje ze sobą first i second i zwraca wynik zapytania
+ * czy first ma niemniejszy priorytet niż second. */
+bool comparePriority(struct Priority *first, struct Priority *second) {
+    if (first->minLength < second->minLength)
+        return true;
+    else if (first->minLength == second->minLength)
+        return first->maxMinYear >= second->maxMinYear;
+    else
+        return false;
+}
+
+/* Porównuje ze sobą priority i road i zwraca wynik zapytania
+ * czy priority ma niemniejszy priorytet niż road. */
+bool comparePriorityAndRoad(struct Priority *priority, Road road) {
+    if (priority->minLength < road->length)
+        return true;
+    else if (priority->minLength == road->length)
+        return priority->maxMinYear >= road->year;
+    else
+        return false;
+}
 
 /* Uzupełnia dane zaalokowanej struktury wskazywanej przez r. */
 void completeRoad(Road r, unsigned length, int year) {
@@ -67,4 +88,51 @@ void printVector(Vector v) {
             printf("%u ", v->arr[i]);
         printf("\n");
     }
+}
+
+/* Wrzuca do wektora zawartość zbioru dróg krajowych. */
+void inOrder(Setroutes t, Vector v) {
+    if (t != NULL) {
+        inOrder(t->left, v);
+        pushVector(v, t->key);
+        inOrder(t->right, v);
+    }
+}
+
+/* Zwraca wektor, którego elementami są wspólne drogi krajowe dwóch miast. */
+Vector getCommonRoutesId(Citytree citytree1, Citytree citytree2) {
+    Vector v1 = getNewVector();
+    Vector v2 = getNewVector();
+    Vector v3 = getNewVector();
+    inOrder(citytree1->setroutes, v1);
+    inOrder(citytree2->setroutes, v2);
+    int i = 0, j = 0;
+    while (i < v1->size && j < v2->size) {
+        if (v1->arr[i] == v2->arr[j]) {
+            pushVector(v3, v1->arr[i]);
+            i++, j++;
+        } else if (v1->arr[i] > v2->arr[j]) {
+            j++;
+        } else {
+            i++;
+        }
+    }
+    clearVector(v1);
+    clearVector(v2);
+    return v3;
+}
+
+/* Sprawdza czy podany rok year jest poprawny. */
+bool isCorrectYear(int year) {
+    return year != INCORRECT_YEAR;
+}
+
+/* Sprawdza czy długość length jest poprawna. */
+bool isCorrectLength(unsigned length) {
+    return length != INCORRECT_LENGTH;
+}
+
+/* Sprawdza czy numer drogi krajowej routeId jest poprawny. */
+bool isCorrectRouteId(unsigned routeId) {
+    return routeId >= MIN_ROUTE_ID && routeId <= MAX_ROUTE_ID;
 }

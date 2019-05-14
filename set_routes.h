@@ -1,18 +1,7 @@
-//
-// Created by root on 29.04.19.
-//
-
 #ifndef DROGI_SET_ROUTES_H
 #define DROGI_SET_ROUTES_H
 
 #include "structure.h"
-
-struct Nodesetroutes {
-    unsigned key;
-    Setroutes left;
-    Setroutes right;
-    int height;
-};
 
 /* Zwraca wskaźnik do nowo zaalokowanego elementu typu Nodesetroutes. */
 Setroutes getNewNodeSR();
@@ -58,7 +47,7 @@ void preOrderSR(Setroutes root);
 /* Wyszukiwanie binarne w zbiorze dróg krajowych t. */
 Setroutes binSearchSR(Setroutes t, unsigned key);
 
-/* Wrzuca do wektora zawartość zbioru dróg krajowych. */
-void inOrder(Setroutes t, Vector v);
+/* Usuwa strukturę wskazywaną przez setroutes. */
+void removeSetroutes(Setroutes setroutes);
 
 #endif //DROGI_SET_ROUTES_H

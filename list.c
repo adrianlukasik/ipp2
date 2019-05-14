@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include "list.h"
@@ -190,8 +186,43 @@ bool checkConnection(Citytree citytree1, Citytree citytree2, List l) {
 /* Zwraca List w momencie gdy napotka citytree1 lub citytree2. */
 List getListCitytree(Citytree citytree1, Citytree citytree2, List l) {
     while (l != NULL) {
-        if (l->citytree == citytree1 || l->citytree == citytree2) {
+        if (l->citytree == citytree1 || l->citytree == citytree2)
             return l;
+        l = l->next;
+    }
+    return l;
+}
+
+/* Porównuje dwie drogi, które są związane z listami i priorytetami.
+ * Drogę z większym priorytetem dołączy do drogi mapListRoad.
+ * Zwraca wartość true jeśli udało się połączyć drogi.
+ * W przeciwnym przypadku zwraca wartość false. */
+bool compareRoads(List firstRoad, struct Priority *first, List secondRoad,
+                  struct Priority *second, List *mapListRoad) {
+    if (firstRoad == NULL && secondRoad == NULL) {
+        return false;
+    } else if (secondRoad == NULL) {
+        List endFirstRoad = getEnd(firstRoad);
+        endFirstRoad->next = (*mapListRoad)->next;
+        free(*mapListRoad);
+        *mapListRoad = firstRoad;
+    } else if (firstRoad == NULL) {
+        List endMainRoad = getEnd(*mapListRoad);
+        endMainRoad->next = secondRoad->next;
+        free(secondRoad);
+    } else {
+        if (comparePriority(first, second)) {
+            List endFirstRoad = getEnd(firstRoad);
+            endFirstRoad->next = (*mapListRoad)->next;
+            free(*mapListRoad);
+            *mapListRoad = firstRoad;
+            clearList(secondRoad);
+        } else {
+            List endMainRoad = getEnd(*mapListRoad);
+            endMainRoad->next = secondRoad->next;
+            free(secondRoad);
+            clearList(firstRoad);
         }
     }
+    return true;
 }

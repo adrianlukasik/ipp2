@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #ifndef DROGI_CITY_TREE_H
 #define DROGI_CITY_TREE_H
 
@@ -163,7 +159,10 @@ bool addRoadBetweenCities(Citytree ct, const char *city1, const char *city2,
 bool repairRoadBetweenCities(Citytree ct, const char *city1, const char *city2,
                              int repairYear);
 
+/* Sprawdza czy znak c jest prawidłowym znakiem nazwy miasta. */
+bool isCorrectChar(char c);
 
+/* Sprawdza czy nazwa miasta city jest prawidłowa. */
 bool isCorrectNameCity(const char *city);
 
 #endif //DROGI_CITY_TREE_H

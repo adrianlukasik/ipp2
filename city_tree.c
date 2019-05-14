@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -127,6 +123,8 @@ void clearBuffer(struct Buffer *buffer) {
     }
 }
 
+/* Zwalnia pamięć przydzieloną buforowi potrzebną do utworzenia
+ * miasta i drogi. */
 void removeBuffer(struct Buffer *buffer) {
     int diff = buffer->size - buffer->index;
     removeBufferCitytree(&(buffer->bufferCitytree), diff);
@@ -306,25 +304,6 @@ void removeTree(Tree t) {
     }
 }
 
-/* Usuwa strukturę wskazywaną przez setroutes. */
-void removeSetroutes(Setroutes setroutes) {
-    if (setroutes != NULL) {
-        removeSetroutes(setroutes->left);
-        removeSetroutes(setroutes->right);
-        free(setroutes);
-    }
-}
-
-/* Usuwa strukturę wskazywaną przez setedges. */
-void removeSetedges(Setedges setedges) {
-    if (setedges != NULL) {
-        removeSetedges(setedges->left);
-        removeSetedges(setedges->right);
-        free(setedges->road);
-        free(setedges);
-    }
-}
-
 /* Dodaje numer drogi krajowej do zbioru dróg krajowych ct.
  * Zwraca wartość true jeśli udało się zaalokować pamięć i dodać numer.
  * W przeciwnym przypadku zwraca false. */
@@ -404,12 +383,14 @@ bool repairRoadBetweenCities(Citytree ct, const char *city1, const char *city2,
     return true;
 }
 
+/* Sprawdza czy znak c jest prawidłowym znakiem nazwy miasta. */
 bool isCorrectChar(char c) {
     if ((c >= 0 && c <= 31) || c == ';')
         return false;
     return true;
 }
 
+/* Sprawdza czy nazwa miasta city jest prawidłowa. */
 bool isCorrectNameCity(const char *city) {
     int n = (int) strlen(city);
     for (int i = 0; i < n; i++) {

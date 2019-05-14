@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #ifndef DROGI_TREE_H
 #define DROGI_TREE_H
 

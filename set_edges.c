@@ -1,10 +1,8 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "set_edges.h"
+#include "city_tree.h"
 
 /* Zwraca wskaźnik do nowo zaalokowanej struktury Nodesetedges. */
 Setedges getNewNodeSE() {
@@ -180,6 +178,7 @@ struct Nodesetedges *deleteNodeSE(struct Nodesetedges *root, Citytree key) {
 
             // Copy the inorder successor's data to this node
             root->key = temp->key;
+            root->road = temp->road;
 
             // Delete the inorder successor
             root->right = deleteNodeSE(root->right, temp->key);
@@ -234,4 +233,26 @@ Setedges binSearchSE(Setedges t, Citytree key) {
             return t;
     }
     return t;
+}
+
+/* Próbuje dodać do zbioru setedges element z kluczem citytreeKey
+ * Jeśli udało się przydzielić pamięć, dodaje element i zwraca true.
+ * W przeciwnym przypadku zwraca false. */
+bool addToSetedges(Setedges *setedges, Citytree citytreeKey, Road road) {
+    Setedges setedgesBuffer = getNewNodeSE();
+    if (setedgesBuffer == NULL)
+        return false;
+    completeNodesetedges(setedgesBuffer, citytreeKey, road);
+    *setedges = insertSE(*setedges, citytreeKey, setedgesBuffer);
+    return true;
+}
+
+/* Usuwa strukturę wskazywaną przez setedges. */
+void removeSetedges(Setedges setedges) {
+    if (setedges != NULL) {
+        removeSetedges(setedges->left);
+        removeSetedges(setedges->right);
+        free(setedges->road);
+        free(setedges);
+    }
 }

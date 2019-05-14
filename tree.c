@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>

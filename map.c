@@ -1,7 +1,3 @@
-//
-// Created by root on 29.04.19.
-//
-
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -13,23 +9,6 @@
 #include "dijkstra.h"
 #include "set_routes.h"
 #include "set_edges.h"
-
-struct Map {
-    Citytree ct;
-    List routes[1000];
-};
-
-bool isCorrectYear(int year) {
-    return year != 0;
-}
-
-bool isCorrectLength(unsigned length) {
-    return length > 0;
-}
-
-bool isCorrectRouteId(unsigned routeId) {
-    return routeId > 0 && routeId < 1000;
-}
 
 /** @brief Tworzy nową strukturę.
  * Tworzy nową, pustą strukturę niezawierającą żadnych miast, odcinków dróg ani
@@ -47,7 +26,7 @@ Map *newMap(void) {
         return NULL;
     }
     map->ct = ct;
-    for (int i = 1; i < 1000; i++) {
+    for (int i = MIN_ROUTE_ID; i < MAX_ROUTE_ID; i++) {
         map->routes[i] = NULL;
     }
     return map;
@@ -60,7 +39,7 @@ Map *newMap(void) {
  */
 void deleteMap(Map *map) {
     if (map != NULL) {
-        for (int i = 1; i < 1000; i++)
+        for (int i = MIN_ROUTE_ID; i < MAX_ROUTE_ID; i++)
             clearList(map->routes[i]);
         removeCitytree(map->ct);
         free(map);
@@ -198,50 +177,20 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
     Citytree endCity = getLastOnList(map->routes[routeId]);
 
     struct Priority *first, *second;
-    first = malloc(sizeof(struct Priority));
-    second = malloc(sizeof(struct Priority));
+    List firstRoad = getRoad(citytree, beginCity, routeId, &first, true);
+    List secondRoad = getRoad(citytree, endCity, routeId, &second, false);
 
-    beginCity->setroutes = deleteNodeSR(beginCity->setroutes, routeId);
-    List firstRoad = dijkstraAlgorithm(beginCity, citytree, routeId, first);
-
-    Setroutes setroutesBuffer = getNewNodeSR();
-    completeNodesetroutes(setroutesBuffer, routeId);
-    beginCity->setroutes = insertSR(beginCity->setroutes, routeId,
-                                    setroutesBuffer);
-
-    endCity->setroutes = deleteNodeSR(endCity->setroutes, routeId);
-    List secondRoad = dijkstraAlgorithm(citytree, endCity, routeId, second);
-
-    setroutesBuffer = getNewNodeSR();
-    completeNodesetroutes(setroutesBuffer, routeId);
-    endCity->setroutes = insertSR(endCity->setroutes, routeId, setroutesBuffer);
-
-    if (firstRoad == NULL && secondRoad == NULL) {
+    if (!compareRoads(firstRoad, first, secondRoad, second,
+                      &map->routes[routeId])) {
+        free(first);
+        free(second);
         return false;
-    } else if (secondRoad == NULL) {
-        List endFirstRoad = getEnd(firstRoad);
-        endFirstRoad->next = map->routes[routeId]->next;
-        free(map->routes[routeId]);
-        map->routes[routeId] = firstRoad;
-    } else if (firstRoad == NULL) {
-        List endMainRoad = getEnd(map->routes[routeId]);
-        endMainRoad->next = secondRoad->next;
-        free(secondRoad);
-    } else {
-        if (comparePriority(first, second)) {
-            List endFirstRoad = getEnd(firstRoad);
-            endFirstRoad->next = map->routes[routeId]->next;
-            free(map->routes[routeId]);
-            map->routes[routeId] = firstRoad;
-        } else {
-            List endMainRoad = getEnd(map->routes[routeId]);
-            endMainRoad->next = secondRoad->next;
-            free(secondRoad);
-        }
     }
 
     addRouteIdToSetroutes(map->routes[routeId], routeId);
 
+    free(first);
+    free(second);
     return true;
 }
 
@@ -263,7 +212,7 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
  * pamięci.
  */
 bool removeRoad(Map *map, const char *city1, const char *city2) {
-    if (!isCorrectNameCity(city1) || !isCorrectNameCity(city1))
+    if (!isCorrectNameCity(city1) || !isCorrectNameCity(city2))
         return false;
     if (map == NULL)
         return false;
@@ -273,81 +222,52 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
         return false;
     if (!checkEdge(citytree1, citytree2))
         return false;
-    Vector v1 = getNewVector();
-    Vector v2 = getNewVector();
-    Vector v3 = getNewVector();
-    inOrder(citytree1->setroutes, v1);
-    inOrder(citytree2->setroutes, v2);
+    Vector v = getCommonRoutesId(citytree1, citytree2);
+    Road r1 = binSearchSE(citytree1->setedges, citytree2)->road;
+    Road r2 = binSearchSE(citytree2->setedges, citytree1)->road;
     citytree1->setedges = deleteNodeSE(citytree1->setedges, citytree2);
     citytree2->setedges = deleteNodeSE(citytree2->setedges, citytree1);
-    int i = 0, j = 0;
-    Road r = binSearchSE(citytree1->setedges, citytree2)->road;
-    while (i < v1->size && j < v2->size) {
-        if (v1->arr[i] == v2->arr[j]) {
-            if (checkConnection(citytree1, citytree2, map->routes[v1->arr[i]])) {
-                pushVector(v3, v1->arr[i]);
-
-                citytree1->setroutes = deleteNodeSR(citytree1->setroutes, v1->arr[i]);
-                citytree2->setroutes = deleteNodeSR(citytree2->setroutes, v1->arr[i]);
-
-                List l = dijkstraAlgorithm(citytree1, citytree2, v1->arr[i], NULL);
-
-                Setroutes setroutesBuffer1 = getNewNodeSR();
-                completeNodesetroutes(setroutesBuffer1, v1->arr[i]);
-                citytree1->setroutes = insertSR(citytree1->setroutes, v1->arr[i], setroutesBuffer1);
-
-                Setroutes setroutesBuffer2 = getNewNodeSR();
-                completeNodesetroutes(setroutesBuffer2, v1->arr[i]);
-                citytree2->setroutes = insertSR(citytree2->setroutes, v1->arr[i], setroutesBuffer2);
-
-                if (l == NULL) {
-                    Setedges setedgesBuffer1 = getNewNodeSE();
-                    completeNodesetedges(setedgesBuffer1, citytree2, r);
-                    citytree1->setedges = insertSE(citytree1->setedges, citytree2, setedgesBuffer1);
-
-                    Setedges setedgesBuffer2 = getNewNodeSE();
-                    completeNodesetedges(setedgesBuffer2, citytree1, r);
-                    citytree2->setedges = insertSE(citytree2->setedges, citytree1, setedgesBuffer2);
-
-                    clearList(l);
-                    clearVector(v1);
-                    clearVector(v2);
-                    clearVector(v3);
-                    return false;
-                }
-            }
-            i++;
-            j++;
-        } else if (v1->arr[i] > v2->arr[j]) {
-            j++;
-        } else {
-            i++;
+    Setedges seBuffer1 = getNewNodeSE();
+    completeNodesetedges(seBuffer1, citytree2, r1);
+    Setedges seBuffer2 = getNewNodeSE();
+    completeNodesetedges(seBuffer2, citytree1, r2);
+    for (int i = 0; i < v->size; i++) {
+        if (!tryDijkstraForRoutesId(citytree1, citytree2,
+                                    map->routes[v->arr[i]], v->arr[i])) {
+            clearVector(v);
+            citytree1->setedges = insertSE(citytree1->setedges, citytree2,
+                                           seBuffer1);
+            citytree2->setedges = insertSE(citytree2->setedges, citytree1,
+                                           seBuffer2);
+            return false;
         }
     }
-
-    for (int i = 0; i < v3->size; i++) {
-        citytree1->setroutes = deleteNodeSR(citytree1->setroutes, v3->arr[i]);
-        citytree2->setroutes = deleteNodeSR(citytree2->setroutes, v3->arr[i]);
-
-        List order = getListCitytree(citytree1, citytree2, map->routes[v3->arr[i]]);
-        List list;
-        if (order->citytree == citytree1)
-            list = dijkstraAlgorithm(citytree2, citytree1, v3->arr[i], NULL);
-        else
-            list = dijkstraAlgorithm(citytree1, citytree2, v3->arr[i], NULL);
-        List l = dijkstraAlgorithm(citytree2, citytree1, v3->arr[i], NULL);
-        order->next = l->next;
-        List tmp = l->next;
-        free(l);
-        l = getEnd(tmp);
-        l->next = order->next->next;
-        free(order->next);
-        addRouteIdToSetroutes(map->routes[v3->arr[i]], v3->arr[i]);
+    for (int i = 0; i < v->size; i++) {
+        if (checkConnection(citytree1, citytree2, map->routes[v->arr[i]])) {
+            citytree1->setroutes = deleteNodeSR(citytree1->setroutes,
+                                                v->arr[i]);
+            citytree2->setroutes = deleteNodeSR(citytree2->setroutes,
+                                                v->arr[i]);
+            List order = getListCitytree(citytree1, citytree2,
+                                         map->routes[v->arr[i]]);
+            List l;
+            if (order->citytree == citytree1)
+                l = dijkstraAlgorithm(citytree2, citytree1, v->arr[i], NULL);
+            else
+                l = dijkstraAlgorithm(citytree1, citytree2, v->arr[i], NULL);
+            List tmp1 = order->next;
+            List tmp2 = order->next->next;
+            order->next = l->next;
+            free(l);
+            l = getEnd(order->next);
+            free(tmp1);
+            l->next = tmp2;
+            addRouteIdToSetroutes(map->routes[v->arr[i]], v->arr[i]);
+        }
     }
-
-    clearVector(v1);
-    clearVector(v2);
-    clearVector(v3);
+    clearVector(v);
+    removeSetedges(seBuffer1);
+    removeSetedges(seBuffer2);
     return true;
 }
 
